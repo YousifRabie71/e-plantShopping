@@ -7,23 +7,34 @@ const CartItem = ({ onContinueShopping }) => {
   const cart = useSelector((state) => state.cart.items);
   const dispatch = useDispatch();
 
-  const getNumericCost = (cost) => {
-    return Number(String(cost).replace('$', ''));
-  };
-
   const calculateTotalAmount = () => {
-    return cart.reduce((total, item) => {
-      return total + getNumericCost(item.cost) * item.quantity;
-    }, 0);
+    let total = 0;
+
+    cart.forEach((item) => {
+      const itemCost = parseFloat(item.cost.substring(1));
+      total += itemCost * item.quantity;
+    });
+
+    return total.toFixed(2);
   };
 
   const calculateTotalQuantity = () => {
-    return cart.reduce((total, item) => total + item.quantity, 0);
+    let totalQuantity = 0;
+
+    cart.forEach((item) => {
+      totalQuantity += item.quantity;
+    });
+
+    return totalQuantity;
   };
 
   const handleContinueShopping = (e) => {
     e.preventDefault();
     onContinueShopping(e);
+  };
+
+  const handleCheckoutShopping = () => {
+    alert('Functionality to be added for future reference');
   };
 
   const handleIncrement = (item) => {
@@ -43,6 +54,8 @@ const CartItem = ({ onContinueShopping }) => {
           quantity: item.quantity - 1,
         })
       );
+    } else {
+      dispatch(removeItem(item.name));
     }
   };
 
@@ -51,11 +64,8 @@ const CartItem = ({ onContinueShopping }) => {
   };
 
   const calculateTotalCost = (item) => {
-    return getNumericCost(item.cost) * item.quantity;
-  };
-
-  const handleCheckout = () => {
-    alert('Coming Soon');
+    const itemCost = parseFloat(item.cost.substring(1));
+    return (itemCost * item.quantity).toFixed(2);
   };
 
   return (
@@ -116,7 +126,7 @@ const CartItem = ({ onContinueShopping }) => {
 
         <br />
 
-        <button className="get-started-button1" onClick={handleCheckout}>
+        <button className="get-started-button1" onClick={handleCheckoutShopping}>
           Checkout
         </button>
       </div>
@@ -125,4 +135,3 @@ const CartItem = ({ onContinueShopping }) => {
 };
 
 export default CartItem;
-
